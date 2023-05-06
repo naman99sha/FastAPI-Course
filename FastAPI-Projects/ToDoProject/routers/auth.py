@@ -24,8 +24,8 @@ oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/login')
 class UserValidation(BaseModel):
     username : str
     email : str
-    firstName : str
-    lastName : str
+    first_name : str
+    last_name : str
     password : str
     role : str
     
@@ -47,11 +47,11 @@ async def create_user(db: db_dependency, createUserReq: UserValidation):
     userModel = Users(
         email = createUserReq.email,
         username = createUserReq.username,
-        firstName = createUserReq.firstName,
-        lastName = createUserReq.lastName,
+        first_name = createUserReq.first_name,
+        last_name = createUserReq.last_name,
         role = createUserReq.role,
-        hashedPassword = bcrypt_context.hash(createUserReq.password),
-        isActive = True
+        hashed_password = bcrypt_context.hash(createUserReq.password),
+        is_active = True
     )
     db.add(userModel)
     db.commit()
@@ -60,7 +60,7 @@ def authenticateUser(username: str, password: str, db):
     user = db.query(Users).filter(Users.username == username).first()
     if not user:
         return False
-    if not bcrypt_context.verify(password, user.hashedPassword):
+    if not bcrypt_context.verify(password, user.hashed_password):
         return False
     return user
 

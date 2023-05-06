@@ -32,11 +32,11 @@ class TodoRequest(BaseModel):
         
 @app.get("/")
 async def read_all(user: user_dependency,db: db_dependency):
-    return db.query(models.Todos).filter(models.Todos.ownerId == user.get('id')).all()
+    return db.query(models.Todos).filter(models.Todos.owner_id == user.get('id')).all()
 
 @app.get("/{todo_id}", status_code=status.HTTP_200_OK)
 async def read_one(user: user_dependency,db: db_dependency, todo_id: int = Path(gt=0)):
-    todo_model = db.query(models.Todos).filter(models.Todos.ownerId==user.get('id')).filter(models.Todos.id == todo_id).first()
+    todo_model = db.query(models.Todos).filter(models.Todos.owner_id==user.get('id')).filter(models.Todos.id == todo_id).first()
     if todo_model:
         return todo_model
     raise HTTPException(status_code=404, detail="Record doesn't exist")
@@ -45,13 +45,13 @@ async def read_one(user: user_dependency,db: db_dependency, todo_id: int = Path(
 async def create_todo(user: user_dependency,db: db_dependency, todo_request: TodoRequest):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    todo_model = models.Todos(**todo_request.dict(), ownerId = user.get('id'))
+    todo_model = models.Todos(**todo_request.dict(), owner_id = user.get('id'))
     db.add(todo_model)
     db.commit()
 
 @app.put("/{todo_id}",status_code=status.HTTP_204_NO_CONTENT)
 async def update_todo(user: user_dependency,db: db_dependency, todo_request: TodoRequest, todo_id : int = Path(gt=0)):
-    todo_model = db.query(models.Todos).filter(models.Todos.id == todo_id).filter(models.Todos.ownerId == user.get('id')).first()
+    todo_model = db.query(models.Todos).filter(models.Todos.id == todo_id).filter(models.Todos.owner_id == user.get('id')).first()
     if todo_model:
         todo_model.title = todo_request.title
         todo_model.description = todo_request.description
@@ -64,7 +64,7 @@ async def update_todo(user: user_dependency,db: db_dependency, todo_request: Tod
     
 @app.delete("/{todo_id}",status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(user: user_dependency,db: db_dependency, todo_id: int = Path(gt=0)):
-    todo_model = db.query(models.Todos).filter(models.Todos.id == todo_id).filter(models.Todos.ownerId == user.get('id')).first()
+    todo_model = db.query(models.Todos).filter(models.Todos.id == todo_id).filter(models.Todos.owner_id == user.get('id')).first()
     if todo_model:
         db.delete(todo_model)
         db.commit()

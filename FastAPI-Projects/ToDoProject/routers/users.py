@@ -34,6 +34,6 @@ async def get_user(user: user_dependency, db: db_dependency):
 @app.post("/change_password", status_code=status.HTTP_202_ACCEPTED)
 async def change_password(user: user_dependency, db: db_dependency, new_pass_req: NewPasswordRequest):
     user = db.query(models.Users).filter(models.Users.id == user.get('id')).first()
-    user.hashedPassword = bcrypt_context.hash(new_pass_req.password)
+    user.hashed_password = bcrypt_context.hash(new_pass_req.password)
     db.add(user)
     db.commit()

@@ -7,10 +7,10 @@ class Users(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True)
     username = Column(String, unique=True)
-    firstName = Column(String)
-    lastName = Column(String)
-    hashedPassword = Column(String)
-    isActive = Column(Boolean, default=True)
+    first_name = Column(String)
+    last_name = Column(String)
+    hashed_password = Column(String)
+    is_active = Column(Boolean, default=True)
     role = Column(String)
 
 class Todos(Base):
@@ -21,4 +21,4 @@ class Todos(Base):
     description = Column(String)
     priority = Column(Integer)
     complete = Column(Boolean, default=False)
-    ownerId = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("users.id"))
